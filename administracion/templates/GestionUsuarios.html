@@ -1,0 +1,153 @@
+{% extends "componentes/header.html" %}
+{% load static %}
+
+{% block title %}Gestión de Usuarios{% endblock %}
+
+{% block content %}
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+    /* TRUCO PARA MANDAR EL FOOTER AL FONDO */
+    footer {
+        position: relative !important;
+        bottom: auto !important;
+        margin-top: 50px !important;
+        z-index: 1 !important;
+    }
+</style>
+
+<div class="container py-5" style="max-width: 1200px;">
+    
+    <!-- HEADER -->
+    <div class="p-5 mb-4 rounded-3 text-white shadow" style="background: linear-gradient(135deg, #4e54c8, #8f94fb);">
+        <h1 class="display-5 fw-bold mb-2">
+            <i class="fas fa-users-cog me-2"></i>Gestión de Usuarios
+        </h1>
+        <p class="fs-5 mb-0">Administra los roles y permisos del sistema</p>
+    </div>
+
+    <!-- MENSAJES DE DJANGO (CON AUTO-CIERRE) -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show shadow-sm auto-dismiss" role="alert">
+                <i class="fas fa-check-circle me-2"></i> {{ message }}
+                <button type="button" class="btn-close" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- TABLA -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0 text-center">
+                <thead class="table-dark">
+                    <tr>
+                        <th class="py-3">ID</th>
+                        <th class="py-3 text-start">Usuario</th>
+                        <th class="py-3 text-start">Correo</th>
+                        <th class="py-3">Activo</th>
+                        <th class="py-3">Admin</th>
+                        <th class="py-3">Técnico</th>
+                        <th class="py-3">Rol Actual</th>
+                        <th class="py-3">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for u in Usuarios %}
+                    <tr>
+                        <td class="fw-bold text-muted">
+                            <!-- El formulario debe estar dentro de una celda válida. -->
+                            <form id="form-guardar-{{ u.id }}" method="POST" action="">
+                                {% csrf_token %}
+                                <input type="hidden" name="Userid" value="{{ u.id }}">
+                            </form>
+                            #{{ u.id }}
+                        </td>
+                        <td class="text-start fw-bold">
+                            <i class="fas fa-user-circle text-muted me-1"></i> {{ u.usuario }}
+                        </td>
+                        <td class="text-start">{{ u.correo }}</td>
+                        
+                        <td>
+                            <input class="form-check-input" type="checkbox" name="activo" form="form-guardar-{{ u.id }}" {% if u.activo %}checked{% endif %}>
+                        </td>
+                        <td>
+                            <input class="form-check-input" type="checkbox" name="admin" form="form-guardar-{{ u.id }}" {% if u.admin %}checked{% endif %}>
+                        </td>
+                        <td>
+                            <input class="form-check-input" type="checkbox" name="tecnico" form="form-guardar-{{ u.id }}" {% if u.tecnico %}checked{% endif %}>
+                        </td>
+
+                        <td>
+                            {% if u.admin %}
+                                <span class="badge bg-primary rounded-pill px-3">Admin</span>
+                            {% elif u.tecnico %}
+                                <span class="badge bg-success rounded-pill px-3">Técnico</span>
+                            {% else %}
+                                <span class="badge bg-secondary rounded-pill px-3">Cliente</span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            <div class="d-flex justify-content-center gap-2">
+                                <!-- Botón Guardar (Asociado al form oculto) -->
+                                <button type="submit" form="form-guardar-{{ u.id }}" class="btn btn-primary btn-sm rounded-circle" title="Guardar cambios" style="width: 35px; height: 35px;">
+                                    <i class="fas fa-save"></i>
+                                </button>
+                                
+                                <!-- Botón Eliminar (Formulario POST propio para que la vista lo acepte) -->
+                                <form method="POST" action="/EliminarUsuario/{{ u.id }}/" style="display:inline; margin:0;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger btn-sm rounded-circle" onclick="return confirm('¿Estás seguro de eliminar este usuario?');" title="Eliminar usuario" style="width: 35px; height: 35px;">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="text-center mt-5">
+        <a href="/Administracion/" class="btn btn-secondary btn-lg rounded-pill px-4">
+            <i class="fas fa-arrow-left me-2"></i> Volver al panel
+        </a>
+    </div>
+
+</div>
+
+<!-- SCRIPT PARA QUE LOS MENSAJES DESAPAREZCAN SOLOS -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const alerts = document.querySelectorAll('.auto-dismiss');
+        
+        alerts.forEach(function(alert) {
+            let timeoutId = setTimeout(function() {
+                cerrarAlerta(alert);
+            }, 3500);
+
+            const closeBtn = alert.querySelector('.btn-close');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    clearTimeout(timeoutId);
+                    cerrarAlerta(alert);
+                });
+            }
+        });
+
+        function cerrarAlerta(elemento) {
+            elemento.classList.remove('show');
+            setTimeout(function() {
+                elemento.remove();
+            }, 300);
+        }
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "componentes/header.html" %}
+{% load static %}
+{% block links %}
+<link rel="stylesheet" href="{% static 'modificar.css' %}">
+{% endblock %}
+{% block title %}Modificar pregunta{% endblock %}
+{% block content %}
+    <h1 id="TituloMod">Modificar pregunta</h1>
+    <div class="MainTodo">
+        <div class="MainPreguntar">
+            <div class="InsPreguntas">
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <input type="submit" value="Modificar pregunta">
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

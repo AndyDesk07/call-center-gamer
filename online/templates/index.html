@@ -1,0 +1,168 @@
+{% extends "componentes/header.html" %}
+{% load static %}
+
+{% block title %}Call Center Gamer - Inicio{% endblock %}
+
+{% block content %}
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+    * { font-family: 'Poppins', sans-serif; }
+
+    /* ARREGLO DEL FOOTER PARA QUE SE QUEDE AL FONDO */
+    footer {
+        position: relative !important;
+        bottom: auto !important;
+        margin-top: 50px !important;
+        z-index: 1 !important;
+    }
+
+    body {
+        background-color: #0d0d1a !important; /* Fondo oscuro gamer */
+        color: white;
+        min-height: 100vh;
+        background-image: 
+            radial-gradient(circle at 15% 50%, rgba(142, 45, 226, 0.15), transparent 30%),
+            radial-gradient(circle at 85% 30%, rgba(0, 255, 136, 0.1), transparent 30%);
+    }
+
+    .hero-section {
+        padding: 100px 20px;
+        text-align: center;
+    }
+
+    .hero-title {
+        font-size: 4rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #00ff88, #00d4ff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 20px;
+        text-shadow: 0 0 30px rgba(0, 255, 136, 0.2);
+    }
+
+    .hero-subtitle {
+        font-size: 1.2rem;
+        color: #a0aec0;
+        max-width: 600px;
+        margin: 0 auto 40px auto;
+        line-height: 1.6;
+    }
+
+    .btn-gamer {
+        background: linear-gradient(135deg, #8e2de2, #4a00e0);
+        color: white;
+        font-weight: 700;
+        padding: 15px 40px;
+        border-radius: 50px;
+        font-size: 1.1rem;
+        border: none;
+        transition: all 0.3s ease;
+        box-shadow: 0 10px 25px rgba(142, 45, 226, 0.4);
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-gamer:hover {
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 15px 35px rgba(142, 45, 226, 0.6);
+        color: white;
+    }
+
+    .feature-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        padding: 40px 30px;
+        text-align: center;
+        transition: all 0.3s;
+        height: 100%;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-10px);
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(0, 255, 136, 0.3);
+    }
+
+    .feature-icon {
+        font-size: 3rem;
+        color: #00ff88;
+        margin-bottom: 20px;
+    }
+
+    .feature-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+
+    .feature-text {
+        color: #a0aec0;
+        font-size: 0.95rem;
+    }
+</style>
+
+<div class="container">
+    
+    <!-- SECCIÓN HERO (PRINCIPAL) -->
+    <div class="hero-section">
+        <h1 class="hero-title">Bienvenido a Call of Gamers!</h1>
+        <p class="hero-subtitle">
+            Comunicate con el mejor call center gamer, nosotros te brindaremos la solución necesaria para tu problema. No dudes más!
+        </p>
+        
+        {% if user.is_authenticated %}
+            <!-- Si ya está logueado, lo mandamos a su panel -->
+            {% if user.admin %}
+                <a href="/Administracion/" class="btn-gamer"><i class="fas fa-tools me-2"></i> Ir al Panel Admin</a>
+            {% elif user.tecnico %}
+                <a href="/EscritorioTecnico/" class="btn-gamer"><i class="fas fa-headset me-2"></i> Ir a mi Escritorio</a>
+            {% else %}
+                <a href="/Inicio/{{ user.id }}/" class="btn-gamer"><i class="fas fa-user me-2"></i> Ir a mi Panel</a>
+            {% endif %}
+        {% else %}
+            <!-- Si no está logueado, lo mandamos al login -->
+            <a href="/Login/" class="btn-gamer"><i class="fas fa-sign-in-alt me-2"></i> Ingresar</a>
+            <a href="/Register/" class="btn-gamer ms-3" style="background: rgba(255,255,255,0.1); box-shadow: none; border: 1px solid rgba(255,255,255,0.2);">Registrarse</a>
+        {% endif %}
+    </div>
+
+    <!-- SECCIÓN DE CARACTERÍSTICAS -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="feature-card">
+                <i class="fas fa-bolt feature-icon"></i>
+                <h3 class="feature-title">Atención 24/7</h3>
+                <p class="feature-text">Comunicate con nosotros en cualquier momento. Nuestro equipo está siempre disponible para ayudarte.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card">
+                <i class="fas fa-gamepad feature-icon"></i>
+                <h3 class="feature-title">Expertos en Gaming</h3>
+                <p class="feature-text">Nuestros técnicos están especializados en hardware, software y redes para que vuelvas a jugar sin problemas.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card">
+                <i class="fas fa-robot feature-icon"></i>
+                <h3 class="feature-title">Soporte con IA</h3>
+                <p class="feature-text">Contamos con un asistente virtual inteligente que te ayudará a resolver tus dudas en segundos.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECCIÓN FINAL -->
+    <div class="text-center mb-5">
+        <h2 class="fw-bold mb-3" style="color: #ffffff;">Comunicate con nosotros</h2>
+        <p style="color: #a0aec0;">Escribenos y nuestros profesionales solucionaran tu problema en tan solo un momento!</p>
+    </div>
+
+</div>
+
+{% endblock %}
